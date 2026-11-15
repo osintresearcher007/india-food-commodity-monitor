@@ -1,12 +1,18 @@
 """India Food Commodity Insights Monitor - Streamlit entry point.  Run:  streamlit run app.py"""
+import hashlib
 import pathlib
 import zipfile
 
-# First start after a simple upload: the code and data folders arrive packed in bundle.zip; unpack them once.
+# Simple-upload mode: the code and data folders arrive packed in bundle.zip. Unpack on first start, and again
+# whenever a different bundle.zip is uploaded (its fingerprint is remembered in .bundle_hash).
 _root = pathlib.Path(__file__).resolve().parent
-if (_root / "bundle.zip").exists() and not (_root / "fci").exists():
-    with zipfile.ZipFile(_root / "bundle.zip") as _z:
-        _z.extractall(_root)
+_bundle, _mark = _root / "bundle.zip", _root / ".bundle_hash"
+if _bundle.exists():
+    _h = hashlib.sha1(_bundle.read_bytes()).hexdigest()
+    if not (_root / "fci").exists() or (_mark.read_text() if _mark.exists() else "") != _h:
+        with zipfile.ZipFile(_bundle) as _z:
+            _z.extractall(_root)
+        _mark.write_text(_h)
 
 import streamlit as st
 
@@ -15,11 +21,8 @@ st.set_page_config(page_title="India Food Commodity Insights Monitor", page_icon
 from fci import ui  # noqa: E402
 from views import alerts, commodity, geography, insights, newsmap, newsroom, overview, policy, sources  # noqa: E402
 
-st.markdown("""<style>
-.block-container{padding-top:2.2rem;max-width:1500px}
-[data-testid="stMetricValue"]{font-size:1.5rem}
-h1{font-size:1.7rem!important} h2{font-size:1.25rem!important} h3{font-size:1.05rem!important}
-</style>""", unsafe_allow_html=True)
+st.markdown(ui.CSS, unsafe_allow_html=True)
+st.session_state["_card_n"] = 0
 
 PAGES = [
     st.Page(overview.page, title="India Overview", icon="🇮🇳", url_path="overview", default=True),
