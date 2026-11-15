@@ -18,7 +18,7 @@ import streamlit as st
 
 st.set_page_config(page_title="India Food Commodity Insights Monitor", page_icon="🌾", layout="wide")
 
-from fci import ui  # noqa: E402
+from fci import autoload, ui  # noqa: E402
 from views import alerts, commodity, geography, insights, newsmap, newsroom, overview, policy, sources  # noqa: E402
 
 st.markdown(ui.CSS, unsafe_allow_html=True)
@@ -38,6 +38,8 @@ PAGES = [
 nav = st.navigation(PAGES)
 st.sidebar.markdown("## 🌾 India Food Commodity Insights Monitor")
 
+load = autoload.start_if_needed()
+st.session_state["agmarknet_load"] = load
 df = ui.prices()
 filtered, chosen = ui.sidebar_filters(df)
 st.session_state["ctx"] = {"all": df, "df": filtered, "filters": chosen}
