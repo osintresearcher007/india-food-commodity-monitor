@@ -1,6 +1,7 @@
 """India Food Commodity Insights Monitor - Streamlit entry point.  Run:  streamlit run app.py"""
 import hashlib
 import pathlib
+import sys
 import zipfile
 
 # Simple-upload mode: the code and data folders arrive packed in bundle.zip. Unpack on first start, and again
@@ -13,6 +14,8 @@ if _bundle.exists():
         with zipfile.ZipFile(_bundle) as _z:
             _z.extractall(_root)
         _mark.write_text(_h)
+        for _name in [n for n in sys.modules if n.split(".")[0] in ("fci", "views")]:
+            del sys.modules[_name]  # make a running server use the newly unpacked code
 
 import streamlit as st
 
