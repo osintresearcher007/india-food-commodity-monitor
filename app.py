@@ -36,7 +36,7 @@ PAGES = [
     st.Page(newsroom.page, title="Local Market News", icon="📰", url_path="news"),
     st.Page(policy.page, title="Policy & International Developments", icon="🏛️", url_path="policy"),
     st.Page(insights.page, title="Weekly & Monthly Insights", icon="📝", url_path="insights"),
-    st.Page(sources.page, title="Data Sources & Uploads", icon="🗄️", url_path="sources"),
+    st.Page(sources.page, title="Data Upload & Fetch", icon="🗄️", url_path="sources"),
 ]
 nav = st.navigation(PAGES)
 st.sidebar.markdown("## 🌾 India Food Commodity Insights Monitor")
@@ -50,8 +50,8 @@ nat = df[df["level"] == "national"]
 mandi = df[df["level"] != "national"]
 st.sidebar.divider()
 st.sidebar.caption(
-    f"All-India (DoCA) data to **{nat['date'].max():%d %b %Y}**" if len(nat) else "No all-India data loaded")
+    f"All-India retail prices to **{nat['date'].max():%d %b %Y}**" if len(nat) else "No all-India data loaded")
 st.sidebar.caption(
-    (f"Mandi data to **{mandi['date'].max():%d %b %Y}**" + (" — SAMPLE" if mandi["is_sample"].any() else ""))
+    (f"Mandi prices to **{mandi[mandi['grade'] == 'Monthly average']['date'].max():%B %Y}**" if (mandi["grade"] == "Monthly average").any() else "Mandi prices loading")
     if len(mandi) else "No mandi data loaded")
 nav.run()
