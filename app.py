@@ -19,7 +19,7 @@ if _bundle.exists():
 
 import streamlit as st
 
-st.set_page_config(page_title="India Food Commodity Insights Monitor", page_icon="🌾", layout="wide")
+st.set_page_config(page_title="India Food Commodity Insights Monitor", page_icon="🌾", layout="wide", initial_sidebar_state="auto")
 
 from fci import autoload, ui  # noqa: E402
 from views import alerts, commodity, geography, insights, newsmap, newsroom, overview, policy, sources  # noqa: E402
